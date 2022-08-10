@@ -7,7 +7,7 @@ def encrypt(arquivos):
             file = f.read()
         f.close()
 
-        aes = pyaes.AESModeOfOperationCTR("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa".encode("UTF-8"))
+        aes = pyaes.AESModeOfOperationCTR(hash_senha.encode("UTF-8"))
         data_encript = aes.encrypt(file)
 
         with open("seguro/" + arquivo + ".nck", "wb") as novo_arquivo:
@@ -22,7 +22,7 @@ def decrypt(arquivos):
 
         f.close()
 
-        aes = pyaes.AESModeOfOperationCTR("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa".encode("UTF-8"))
+        aes = pyaes.AESModeOfOperationCTR(hash_senha.encode("UTF-8"))
         data = aes.decrypt(file)
 
         with open("seguro/" + arquivo.replace(".nck", ""), "wb") as novo_arquivo:
@@ -112,12 +112,15 @@ def menu():
 def login():
 
     tentativas = 3
+    
+    global hash_senha
+    
     while tentativas > 0:
         file = open("arquivos/senha.txt", "r")
         read = file.read().replace("\n", "")
         senha = input("digite sua senha: ")
         hash_senha = hashlib.sha512(senha.encode("UTF-8")).hexdigest()
-
+        
         if hash_senha == read:
             menu()
             tentativas = 0
@@ -125,5 +128,6 @@ def login():
             print ("Senha incorreta! Por favor tente novamente.")
             print ("Tentativas restantes" , tentativas)
         tentativas = tentativas - 1
+
 
 login()
